@@ -1,0 +1,22 @@
+# This is a multi-stage Dockerfile. Mainly, it builds (compiles)
+# the source code inside a different container setup (see :2.1-sdk)
+# then it copies the compiled (final) result to a ligther base container
+# which finaly be the origin of the final image.
+FROM microsoft/dotnet:2.1-aspnetcore-runtime AS base
+
+FROM microsoft/dotnet:2.1-sdk AS build
+WORKDIR /src
+COPY ["EzShop.Orders.csproj", "."]
+RUN dotnet restore "EzShop.Orders.csproj"
+COPY . .
+
+RUN dotnet build "EzShop.Orders.csproj" -c Release -o /app
+
+FROM build AS publish
+RUN dotnet publish "EzShop.Orders.csproj" -c Release -o /app
+
+FROM base AS final
+WORKDIR /app
+EXPOSE 80
+COPY --from=publish /app .
+ENTRYPOINT ["dotnet", "EzShop.Orders.dll"]

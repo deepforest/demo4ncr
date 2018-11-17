@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # The name of this deployment
+  name: ezshop-orders
+spec:
+  replicas: 1
+  # Specify label-selectors to be used to find managed Pods
+  selector:
+    matchLabels:
+      app: ezshop-orders
+
+  # Pods specification
+  template:
+    metadata:
+      labels:
+        # Labels attach to each Pod created
+        app: ezshop-orders
+    spec:
+      containers:
+      - name: ezshop-orders
+        # Docker image file to use for creating containers
+        image: ezshop.orders:v1.0
+        ports:
+        - containerPort: 80
+        env:
+          - name: ACCOUNTS_SERVICE_API_URI
+            value: http://ezshop-accounts/api
+        resources:
+          limits:
+            memory: "50Mi"
+          requests:
+            memory: "50Mi"

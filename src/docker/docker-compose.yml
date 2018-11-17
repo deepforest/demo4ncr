@@ -1,0 +1,15 @@
+version: "3"
+services:
+  ezshop.orders:
+    build:
+      context: ./EzShop.Orders
+      dockerfile: Dockerfile
+    ports:
+      - "5000:80"
+
+  ezshop.accounts:
+    build:
+      context: ./ezShop.accounts
+      dockerfile: Dockerfile
+    ports:
+      - "5001:80"
